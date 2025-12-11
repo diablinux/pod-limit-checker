@@ -37,17 +37,15 @@ go.work.sum
 # ================================
 # BINARY & DISTRIBUTION FILES
 # ================================
-./pod-limit-checker         # Compiled binary
-pod-limit-checker           # Compiled binary
-pod-limit-checker           # Compiled binary
-pod-limit-checker.exe       # Windows binary
-pod-limit-checker.darwin    # macOS binary
-pod-limit-checker.linux     # Linux binary
-dist/                       # Distribution folder
-release/                    # Release artifacts
-*.dmg                       # macOS disk image
-*.deb                       # Debian package
-*.rpm                       # RPM package
+pod-limit-checker
+pod-limit-checker.exe
+pod-limit-checker.darwin
+pod-limit-checker.linux
+dist/
+release/
+*.dmg
+*.deb
+*.rpm
 
 # ================================
 # GO SPECIFIC
