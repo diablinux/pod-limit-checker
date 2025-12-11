@@ -277,4 +277,3 @@ out/
 # ================================
 # Note: These are typically in GOPATH/pkg/mod, not project directory
 # but included for completeness
-/pkg/
