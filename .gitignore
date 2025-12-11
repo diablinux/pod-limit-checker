@@ -30,3 +30,253 @@ go.work.sum
 # Editor/IDE
 # .idea/
 # .vscode/
+# ================================
+# POD LIMIT CHECKER - .gitignore
+# ================================
+
+# ================================
+# BINARY & DISTRIBUTION FILES
+# ================================
+./pod-limit-checker         # Compiled binary
+pod-limit-checker           # Compiled binary
+pod-limit-checker           # Compiled binary
+pod-limit-checker.exe       # Windows binary
+pod-limit-checker.darwin    # macOS binary
+pod-limit-checker.linux     # Linux binary
+dist/                       # Distribution folder
+release/                    # Release artifacts
+*.dmg                       # macOS disk image
+*.deb                       # Debian package
+*.rpm                       # RPM package
+
+# ================================
+# GO SPECIFIC
+# ================================
+# Binaries for programs
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Dependency directories (remove the comment below to include it)
+# vendor/
+
+# Go workspace file
+go.work
+go.work.sum
+
+# ================================
+# DEVELOPMENT ENVIRONMENT
+# ================================
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ================================
+# TESTING & COVERAGE
+# ================================
+coverage.txt
+coverage.out
+profile.out
+test-results/
+*.prof
+*.trace
+
+# ================================
+# DOCUMENTATION
+# ================================
+_site/
+docs/build/
+docs/site/
+
+# ================================
+# CONFIGURATION FILES
+# ================================
+# Local configuration files (should not be committed)
+config.yaml
+config.yml
+config.local.*
+.env
+.env.local
+.env.*.local
+secrets.yaml
+kubeconfig.local
+*.local
+
+# ================================
+# TEMPORARY FILES
+# ================================
+tmp/
+temp/
+*.tmp
+*.temp
+
+# ================================
+# LOGS
+# ================================
+*.log
+logs/
+debug.log
+error.log
+
+# ================================
+# BUILD ARTIFACTS
+# ================================
+build/
+bin/
+artifacts/
+*.tar.gz
+*.zip
+
+# ================================
+# KUBERNETES/CLUSTER SPECIFIC
+# ================================
+# Local kubeconfig files
+kubeconfig
+.kube/config.local
+.kube/dev-cluster-config
+*.kubeconfig.local
+
+# Test cluster files
+kind-config-*
+minikube-*
+.k3s/
+
+# Generated manifests
+manifests/generated/
+*.generated.yaml
+*.patched.yaml
+
+# ================================
+# INTEGRATION TEST FILES
+# ================================
+# Test cluster state dumps
+cluster-state.yaml
+snapshot-*.yaml
+test-data/
+
+# ================================
+# PROJECT SPECIFIC EXCLUSIONS
+# ================================
+# Example output files from the tool
+sample-output.json
+sample-output.yaml
+report-*.txt
+analysis-*.json
+examples/fixes/
+*.patch.yaml
+
+# ================================
+# DEPENDENCY MANAGEMENT
+# ================================
+# If using vendored dependencies
+# vendor/
+
+# If using Go modules
+# Note: go.sum should be committed, but these should not
+# go.mod is committed, but backup files should not
+go.mod~
+go.sum~
+
+# ================================
+# DOCKER & CONTAINERIZATION
+# ================================
+# Docker build artifacts
+Dockerfile.bak
+*.dockerignore
+.docker/
+
+# Container images
+*.tar
+image.tar
+pod-limit-checker:*
+
+# ================================
+# CI/CD ARTIFACTS
+# ================================
+.circleci/
+.github/workflows/local-*
+.gitlab-ci.yml.local
+.ci/
+ci-output/
+
+# ================================
+# OS SPECIFIC
+# ================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+[Tt]humbs.db
+
+# Windows
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ================================
+# IDE SPECIFIC
+# ================================
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# JetBrains IDEs (IntelliJ, GoLand, etc.)
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# ================================
+# MISC
+# ================================
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Compression artifacts
+*.gz
+*.bz2
+*.zip
+*.7z
+
+# ================================
+# GO MODULES CACHE
+# ================================
+# Note: These are typically in GOPATH/pkg/mod, not project directory
+# but included for completeness
+/pkg/
