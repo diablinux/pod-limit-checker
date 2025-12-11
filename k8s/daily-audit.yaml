@@ -1,0 +1,16 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: daily-resource-check
+spec:
+  schedule: "0 2 * * *"  # 2 AM daily
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: pod-limit-checker-sa
+          containers:
+          - name: checker
+            image: docker.io/diablinux/pod-limit-checker:latest
+            args: ["--verbose"]
+          restartPolicy: Never

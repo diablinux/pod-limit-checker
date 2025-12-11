@@ -1,0 +1,13 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: resource-audit
+spec:
+  template:
+    spec:
+      serviceAccountName: pod-limit-checker-sa
+      containers:
+      - name: checker
+        image: docker.io/diablinux/pod-limit-checker:latest
+        args: ["--namespace", "all", "--verbose"]
+      restartPolicy: Never
