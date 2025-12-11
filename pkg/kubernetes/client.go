@@ -16,24 +16,22 @@ type Client struct {
 	MetricsClient *metricsv.Clientset
 }
 
-func NewClient(kubeconfigPath string) (*Client, error) {
-	// Build configuration
-	config, err := buildConfig(kubeconfigPath)
+func NewClient(kubeconfigPath string, quiet bool) (*Client, error) {
+	config, err := buildConfig(kubeconfigPath, quiet)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to build config: %v", err)
 	}
 
-	// Create clientset
 	clientset, err := kubernetes.NewForConfig(config)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create Kubernetes client: %v", err)
 	}
 
-	// Create metrics client
 	metricsClient, err := metricsv.NewForConfig(config)
 	if err != nil {
-		// Don't fail if metrics server is not available
-		fmt.Println("⚠️  Metrics server not available, continuing without metrics")
+		if !quiet {
+			fmt.Fprintln(os.Stderr, "⚠️  Metrics server not available, continuing without metrics")
+		}
 		return &Client{
 			Clientset: clientset,
 		}, nil
@@ -45,10 +43,12 @@ func NewClient(kubeconfigPath string) (*Client, error) {
 	}, nil
 }
 
-func buildConfig(kubeconfigPath string) (*rest.Config, error) {
+func buildConfig(kubeconfigPath string, quiet bool) (*rest.Config, error) {
 	// First, try in-cluster config
 	if config, err := rest.InClusterConfig(); err == nil {
-		fmt.Println("✅ Using in-cluster Kubernetes configuration")
+		if !quiet {
+			fmt.Fprintln(os.Stderr, "✅ Using in-cluster Kubernetes configuration")
+		}
 		return config, nil
 	}
 
@@ -79,7 +79,9 @@ func buildConfig(kubeconfigPath string) (*rest.Config, error) {
 		return nil, fmt.Errorf("could not find kubeconfig and not running in-cluster")
 	}
 
-	fmt.Printf("✅ Using kubeconfig: %s\n", kubeconfigPath)
+	if !quiet {
+		fmt.Fprintf(os.Stderr, "✅ Using kubeconfig: %s\n", kubeconfigPath)
+	}
 	return clientcmd.BuildConfigFromFlags("", kubeconfigPath)
 }
 
@@ -87,5 +89,5 @@ func homeDir() string {
 	if h := os.Getenv("HOME"); h != "" {
 		return h
 	}
-	return os.Getenv("USERPROFILE") // windows
+	return os.Getenv("USERPROFILE")
 }

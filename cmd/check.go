@@ -19,7 +19,8 @@ var (
 	showAll    bool
 	namespace  string
 	verbose    bool
-	noExamples bool // Add this
+	noExamples bool
+	quiet      bool
 )
 
 func Execute() error {
@@ -29,13 +30,19 @@ func Execute() error {
 	flag.BoolVar(&showAll, "all", false, "show all pods including those with limits")
 	flag.StringVar(&namespace, "namespace", "", "specific namespace to check (default: all namespaces)")
 	flag.BoolVar(&verbose, "verbose", false, "show all suggestions in table output")
-	flag.BoolVar(&noExamples, "no-examples", false, "don't show example YAML fixes") // Add this
+	flag.BoolVar(&noExamples, "no-examples", false, "don't show example YAML fixes")
+	flag.BoolVar(&quiet, "quiet", false, "suppress informational output (useful for JSON/YAML)") // New flag
 	flag.Parse()
 
+	// Determine if we should be quiet
+	shouldBeQuiet := quiet || output == "json" || output == "yaml"
+
 	// Initialize Kubernetes client
-	client, err := kubernetes.NewClient(kubeconfig)
+	client, err := kubernetes.NewClient(kubeconfig, shouldBeQuiet) // Pass quiet flag
 	if err != nil {
-		return fmt.Errorf("failed to create Kubernetes client: %v", err)
+		// Always print errors to stderr
+		fmt.Fprintf(os.Stderr, "Error: failed to create Kubernetes client: %v\n", err)
+		os.Exit(1)
 	}
 
 	// Create analyzer
@@ -48,15 +55,20 @@ func Execute() error {
 	// Get pods without limits
 	pods, err := podAnalyzer.GetPodsWithoutLimits(ctx, namespace)
 	if err != nil {
-		return fmt.Errorf("failed to get pods: %v", err)
+		fmt.Fprintf(os.Stderr, "Error: failed to get pods: %v\n", err)
+		os.Exit(1)
 	}
 
-	// Get usage metrics
-	fmt.Println("Fetching pod metrics...")
+	// Get usage metrics - only show message if not quiet
+	if !shouldBeQuiet {
+		fmt.Println("Fetching pod metrics...")
+	}
 	podMetrics, err := podAnalyzer.GetPodMetrics(ctx, namespace)
 	if err != nil {
-		fmt.Printf("Warning: Could not fetch metrics: %v\n", err)
-		fmt.Println("Continuing without metric-based suggestions...")
+		if !shouldBeQuiet {
+			fmt.Fprintf(os.Stderr, "Warning: Could not fetch metrics: %v\n", err)
+			fmt.Fprintln(os.Stderr, "Continuing without metric-based suggestions...")
+		}
 	}
 
 	// Analyze pods and generate suggestions
@@ -65,9 +77,11 @@ func Execute() error {
 	// Create reporter and generate output
 	rep := reporter.NewReporter(output)
 	rep.SetVerbose(verbose)
-	rep.SetShowExamples(!noExamples) // Set based on flag
+	rep.SetShowExamples(!noExamples)
+	rep.SetQuiet(shouldBeQuiet)
 	if err := rep.GenerateReport(results, showAll); err != nil {
-		return fmt.Errorf("failed to generate report: %v", err)
+		fmt.Fprintf(os.Stderr, "Error: failed to generate report: %v\n", err)
+		os.Exit(1)
 	}
 
 	return nil
@@ -77,5 +91,5 @@ func homeDir() string {
 	if h := os.Getenv("HOME"); h != "" {
 		return h
 	}
-	return os.Getenv("USERPROFILE") // windows
+	return os.Getenv("USERPROFILE")
 }

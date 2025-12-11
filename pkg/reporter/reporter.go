@@ -18,10 +18,15 @@ type Reporter struct {
 	format       string
 	verbose      bool
 	showExamples bool
+	quiet        bool
 }
 
 func NewReporter(format string) *Reporter {
 	return &Reporter{format: format, showExamples: true}
+}
+
+func (r *Reporter) SetQuiet(quiet bool) {
+	r.quiet = quiet
 }
 
 func (r *Reporter) SetVerbose(verbose bool) {

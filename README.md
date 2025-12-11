@@ -273,7 +273,7 @@ if podMetrics, err := analyzer.GetPodMetrics(ctx); err != nil {
 ./pod-limit-checker --namespace production
 
 # Output in JSON for automation
-./pod-limit-checker --output json | jq '.[] | select(.risk == "HIGH")'
+./pod-limit-checker --output json | jq '.[] | select(.RiskLevel == "HIGH")'
 ```
 #### Advanced Scenarios
 
@@ -282,12 +282,9 @@ if podMetrics, err := analyzer.GetPodMetrics(ctx); err != nil {
 ./pod-limit-checker --namespace staging --verbose
 
 # Generate YAML patches for automation
-./pod-limit-checker --output yaml > analysis.yaml
-
-# Integration with kubectl for immediate fixes
-./pod-limit-checker --namespace apps --output json \
-  | kubectl patch deployment -f /dev/stdin --type merge
+./pod-limit-checker --namespace kubernetes-dashboard --output yaml --quiet |   yq eval '.[0].exampleyaml'
 ```
+
 #### Real-World Workflow
 
 ```bash
@@ -298,9 +295,7 @@ if podMetrics, err := analyzer.GetPodMetrics(ctx); err != nil {
 ./pod-limit-checker --namespace customer-facing --verbose
 
 # 3. Generate specific recommendations
-./pod-limit-checker --namespace database \
-  | grep "Suggested:" \
-  | awk '{print $2, $3}' > recommendations.txt
+./pod-limit-checker --output json --quiet |   jq -r '.[] | "\(.PodName) \(.ContainerName)|CPU:\(.RecommendedCPULimit)|Memory:\(.RecommendedMemoryLimit)"' |   column -t -s '|'
 
 # 4. Apply fixes (manual step)
 # Use the provided YAML examples to update deployments
